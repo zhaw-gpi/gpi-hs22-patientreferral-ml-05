@@ -240,28 +240,6 @@ Diese Anforderung soll nicht in der Prozessapplikation selbst realisiert werden,
       <bpmn:incoming>Flow_10738wk</bpmn:incoming>
       <bpmn:outgoing>Flow_0ocxv4i</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:scriptTask id="ZustandigeTriageArztinErmittelnTask1" name="Zuständige Triage-Ärzt:in ermitteln" scriptFormat="JavaScript" camunda:resultVariable="responsible_physician">
-      <bpmn:documentation>Anforderungen
-===========
-Ermittlung über Entscheidungstabelle in DMN der zuständigen Triage-Ärzt:in als Output in Prozessvariable responsible_physician basierend auf Input der Prozessvariablen Notfall, zugehörige Abteilung und Versicherungstyp mit folgenden Regeln:
-- Alle Notfälle gehen an die Ärzt:in emer
-- Alle Nicht-Notfälle der Abteilung Dermatologie und Neurologie gehen an die Ärzt:in dene
-- Privatversicherte Nicht-Notfälle der Abteilung Gastroenterologie gehen an die Ärzt:in gapr
-- Nicht-Privatversicherte Nicht-Notfälle der Abteilung Gastroenterologie gehen an die Ärzt:in gaen
-
-Weitere Hinweise
-=============
-Zugegebenermassen ist hier die Nutzung von DMN etwas gesucht, aber denkbar. In der Realität würde man es aber entweder deutlich simpler lösen (unpersönliche Postfächer statt Einzelbenutzer) oder deutlich komplexer, da z.B. eine Ärzt:in in den Ferien sein kann und dann eine Stellvertretung hinterlegt sein müsste, usw. Hinzu kommt, dass ein Spital natürlich deutlich mehr als bloss drei Abteilungen hat...</bpmn:documentation>
-      <bpmn:incoming>Flow_0x862al</bpmn:incoming>
-      <bpmn:outgoing>Flow_1vrxdph</bpmn:outgoing>
-      <bpmn:script>var result;
-
-if (case_is_emergency === true) {
-  result = "emer";
-} else {
-  result = (case_department === "Gastroenterologie" ? "gaen" : "dene");
-}</bpmn:script>
-    </bpmn:scriptTask>
     <bpmn:userTask id="ZuweisungsantragFormellPrufenUndErganzenTask" name="Zuweisungs-antrag formell prüfen und ergänzen" camunda:asyncAfter="true" camunda:candidateGroups="patadmin">
       <bpmn:documentation>Anforderungen
 ===========
@@ -394,6 +372,21 @@ Wie dem Prozessmodell der Patientenadministration entnommen werden kann, wird di
       <bpmn:incoming>Flow_0ocxv4i</bpmn:incoming>
       <bpmn:outgoing>Flow_11cxejl</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:businessRuleTask id="ZustandigeTriageArztinErmittelnTask1" name="Zuständige Triage-Ärzt:in ermitteln" camunda:asyncAfter="true" camunda:resultVariable="responsible_physician" camunda:decisionRef="DefineResponsiblePhysician" camunda:mapDecisionResult="singleEntry">
+      <bpmn:documentation>Anforderungen
+===========
+Ermittlung über Entscheidungstabelle in DMN der zuständigen Triage-Ärzt:in als Output in Prozessvariable responsible_physician basierend auf Input der Prozessvariablen Notfall, zugehörige Abteilung und Versicherungstyp mit folgenden Regeln:
+- Alle Notfälle gehen an die Ärzt:in emer
+- Alle Nicht-Notfälle der Abteilung Dermatologie und Neurologie gehen an die Ärzt:in dene
+- Privatversicherte Nicht-Notfälle der Abteilung Gastroenterologie gehen an die Ärzt:in gapr
+- Nicht-Privatversicherte Nicht-Notfälle der Abteilung Gastroenterologie gehen an die Ärzt:in gaen
+
+Weitere Hinweise
+=============
+Zugegebenermassen ist hier die Nutzung von DMN etwas gesucht, aber denkbar. In der Realität würde man es aber entweder deutlich simpler lösen (unpersönliche Postfächer statt Einzelbenutzer) oder deutlich komplexer, da z.B. eine Ärzt:in in den Ferien sein kann und dann eine Stellvertretung hinterlegt sein müsste, usw. Hinzu kommt, dass ein Spital natürlich deutlich mehr als bloss drei Abteilungen hat...</bpmn:documentation>
+      <bpmn:incoming>Flow_0x862al</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vrxdph</bpmn:outgoing>
+    </bpmn:businessRuleTask>
   </bpmn:process>
   <bpmn:process id="Process_1b3ufno" isExecutable="false">
     <bpmn:laneSet id="LaneSet_1xy3j9e">
@@ -753,9 +746,6 @@ Wie dem Prozessmodell der Patientenadministration entnommen werden kann, wird di
       <bpmndi:BPMNShape id="Activity_0n6rm3i_di" bpmnElement="TerminrelevanteInformationenAusKISLesenTask">
         <dc:Bounds x="1540" y="1740" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0obd70q_di" bpmnElement="ZustandigeTriageArztinErmittelnTask1">
-        <dc:Bounds x="1180" y="1740" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1ebeq3n_di" bpmnElement="ZuweisungsantragFormellPrufenUndErganzenTask">
         <dc:Bounds x="730" y="1980" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -764,6 +754,9 @@ Wie dem Prozessmodell der Patientenadministration entnommen werden kann, wird di
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0tyaikd_di" bpmnElement="KonsultationsterminVereinbarenTask">
         <dc:Bounds x="1720" y="1980" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0iffi6m_di" bpmnElement="ZustandigeTriageArztinErmittelnTask1">
+        <dc:Bounds x="1180" y="1740" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0sqckpy_di" bpmnElement="Flow_0sqckpy">
         <di:waypoint x="638" y="1510" />
